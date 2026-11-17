@@ -75,9 +75,11 @@ p { margin: 0 0 calc(var(--space) * 2); }
 
 [id] { scroll-margin-top: calc(var(--header-h) + 16px); }
 
+/* Foco: Terracota (manual) + anillo Carbón para llegar a 3:1 sobre fondos claros */
 :focus-visible {
-  outline: 2px solid var(--color-terracota);
-  outline-offset: 3px;
+  outline: 3px solid var(--color-terracota);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--color-carbon);
   border-radius: 4px;
 }
 
@@ -342,7 +344,11 @@ p { margin: 0 0 calc(var(--space) * 2); }
 }
 .field input:hover { border-color: rgba(59, 53, 50, .4); }
 .field input[aria-invalid="true"] { border-color: var(--color-carbon); background: var(--color-arena); box-shadow: inset 4px 0 0 var(--color-terracota); }
+.field input[aria-invalid="true"]:focus-visible { box-shadow: inset 4px 0 0 var(--color-terracota), 0 0 0 2px var(--color-carbon); }
 .field__hint { display: block; font-size: 13px; margin-top: 6px; color: rgba(59, 53, 50, .75); }
+.field__error { display: block; font-size: 14px; font-weight: 500; margin-top: 6px; }
+.field__error:empty { display: none; }
+.field__error::before { content: "↳ "; color: var(--color-terracota); }
 
 .check { display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start; font-size: 14px; line-height: 1.5; }
 .check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--color-carbon); }
@@ -377,7 +383,7 @@ p { margin: 0 0 calc(var(--space) * 2); }
 .footer__title { font-size: 14px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 12px; opacity: .8; }
 .footer__list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; font-size: 15px; }
 .footer__bottom { border-top: 1px solid rgba(243, 236, 228, .15); margin-top: 48px; padding-top: 24px; font-size: 13px; opacity: .8; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
-.site-footer :focus-visible { outline-color: var(--color-rosa); }
+.site-footer :focus-visible { box-shadow: 0 0 0 2px var(--color-arena); }
 
 /* ---------- Páginas simples (legal / 404) ---------- */
 .page { padding: 48px 0 var(--section-gap); }

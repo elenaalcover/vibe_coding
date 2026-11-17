@@ -254,29 +254,40 @@
         </div>
 
         <div class="card reveal">
-          <form id="reserva-form" class="form" action="https://api.web3forms.com/submit" method="POST" novalidate>
-            <input type="hidden" name="access_key" value="">
+          <form id="reserva-form" class="form" action="https://api.web3forms.com/submit" method="POST">
+            <!-- 👉 Pega aquí tu clave de Web3Forms (https://web3forms.com). Con el texto de ejemplo, el formulario va en modo demo y no envía nada. -->
+            <input type="hidden" name="access_key" value="PON_AQUI_TU_CLAVE_DE_WEB3FORMS">
             <input type="hidden" name="subject" value="Nueva reserva de clase de prueba · Brisa">
             <input type="hidden" name="from_name" value="Web Brisa">
             <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
+            <noscript>
+              <p class="form__msg is-error">Tu navegador no ejecuta JavaScript: puedes enviar el formulario igualmente o escribirnos por <a href="https://wa.me/34600000000">WhatsApp</a>.</p><!-- FICTICIO -->
+            </noscript>
+
             <div class="field">
               <label for="f-nombre">Tu nombre</label>
-              <input id="f-nombre" name="nombre" type="text" autocomplete="name" required minlength="2" maxlength="80">
+              <input id="f-nombre" name="nombre" type="text" autocomplete="name" required minlength="2" maxlength="80" aria-describedby="f-nombre-error">
+              <span class="field__error" id="f-nombre-error"></span>
             </div>
             <div class="field">
               <label for="f-telefono">Teléfono</label>
-              <input id="f-telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" required maxlength="20" aria-describedby="f-telefono-hint">
-              <span class="field__hint" id="f-telefono-hint">Te llamamos o te escribimos por WhatsApp.</span>
+              <input id="f-telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" required maxlength="20" aria-describedby="f-telefono-hint f-telefono-error">
+              <span class="field__hint" id="f-telefono-hint">9 cifras. Si tu número es de fuera de España, con su prefijo (+44…). Te llamamos o te escribimos por WhatsApp.</span>
+              <span class="field__error" id="f-telefono-error"></span>
             </div>
             <div class="field">
               <label for="f-email">Correo electrónico</label>
-              <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="120">
+              <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="120" aria-describedby="f-email-error">
+              <span class="field__error" id="f-email-error"></span>
             </div>
-            <label class="check" for="f-privacidad">
-              <input id="f-privacidad" name="privacidad" type="checkbox" required>
-              <span>He leído y acepto la <a href="privacidad.html">política de privacidad</a>. Usaremos tus datos solo para contactarte sobre tu reserva.</span>
-            </label>
+            <div class="field">
+              <label class="check" for="f-privacidad">
+                <input id="f-privacidad" name="privacidad" type="checkbox" required aria-describedby="f-privacidad-error">
+                <span>He leído y acepto la <a href="privacidad.html">política de privacidad</a>. Usaremos tus datos solo para contactarte sobre tu reserva.</span>
+              </label>
+              <span class="field__error" id="f-privacidad-error"></span>
+            </div>
 
             <p id="reserva-mensaje" class="form__msg" role="status" aria-live="polite"></p>
 

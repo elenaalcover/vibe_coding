@@ -24,6 +24,14 @@
       ['email sin dominio es error', v({ ...ok, email: 'lucia@' }).errors[0] === 'email'],
       ['privacidad sin marcar es error', v({ ...ok, privacidad: false }).errors[0] === 'privacidad'],
       ['privacidad "true" como texto no vale', v({ ...ok, privacidad: 'true' }).ok === false],
+      // Revisión final · Important 3: teléfonos de fuera de España
+      ['móvil británico +44 7911 123456 es válido', v({ ...ok, telefono: '+44 7911 123456' }).ok === true],
+      ['móvil con 0049 es válido', v({ ...ok, telefono: '0049 1512 3456789' }).ok === true],
+      ['34612345678 sin + es válido', v({ ...ok, telefono: '34612345678' }).ok === true],
+      ['000000000 no es un teléfono', v({ ...ok, telefono: '000000000' }).errors[0] === 'telefono'],
+      ['+44 con 5 cifras es error', v({ ...ok, telefono: '+44 12345' }).errors[0] === 'telefono'],
+      ['+34 con 8 cifras es error', v({ ...ok, telefono: '+34 61234567' }).errors[0] === 'telefono'],
+      ['cada campo tiene su mensaje de error', ['nombre','telefono','email','privacidad'].every(k => typeof window.Brisa.FIELD_ERRORS?.[k] === 'string' && window.Brisa.FIELD_ERRORS[k].length > 10)],
     ];
     const fallos = casos.filter(([, pasa]) => !pasa).length;
     document.getElementById('lista').innerHTML = casos.map(([n, p]) => `<li class="${p ? 'ok' : 'fail'}">${p ? '✔' : '✘'} ${n}</li>`).join('');

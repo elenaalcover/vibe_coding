@@ -7,12 +7,11 @@
 (function () {
   'use strict';
 
-  /* Pega aquí tu clave de Web3Forms.
-     Cómo conseguirla: entra en https://web3forms.com, escribe el correo
-     donde quieres recibir las reservas y te llegará la clave al momento.
-     Mientras dejes este texto de ejemplo, el formulario funciona en
+  /* La clave de Web3Forms está en index.html, en el campo oculto
+     <input type="hidden" name="access_key" value="...">. Ahí se cambia
+     (así el formulario también funciona si el navegador no ejecuta JavaScript).
+     Mientras tenga el texto de ejemplo, el formulario funciona en
      "modo demo": muestra la confirmación pero NO envía nada. */
-  const WEB3FORMS_KEY = 'PON_AQUI_TU_CLAVE_DE_WEB3FORMS';
   const DEMO_KEY = 'PON_AQUI_TU_CLAVE_DE_WEB3FORMS';
   const ENDPOINT = 'https://api.web3forms.com/submit';
 
@@ -22,12 +21,29 @@
 
   const FIELD_ORDER = ['nombre', 'telefono', 'email', 'privacidad'];
 
-  /** Deja solo los dígitos nacionales: quita espacios, guiones, puntos,
-      paréntesis y el prefijo +34 / 0034. */
+  const FIELD_ERRORS = {
+    nombre: 'Escribe tu nombre, por favor.',
+    telefono: 'Revisa el teléfono: 9 cifras, o con su prefijo si es de fuera de España (+44…).',
+    email: 'Revisa el correo: tiene que ser algo como nombre@correo.com.',
+    privacidad: 'Para contactarte necesitamos que aceptes la política de privacidad.'
+  };
+
+  /** Quita espacios, guiones, puntos y paréntesis. */
   function normalizePhone(value) {
-    let v = String(value || '').replace(/[\s\-.()]/g, '');
-    v = v.replace(/^(\+34|0034)/, '');
-    return v;
+    return String(value || '').replace(/[\s\-.()]/g, '');
+  }
+
+  /** Móvil o fijo español (9 cifras que empiezan por 6, 7, 8 o 9, con o sin
+      +34 / 0034 / 34) o número internacional con prefijo + / 00 (8–15 cifras). */
+  function isValidPhone(value) {
+    const v = normalizePhone(value);
+    const spanish = /^[6789]\d{8}$/;
+    const withEsPrefix = v.match(/^(?:\+|00)?34(\d+)$/);
+    if (withEsPrefix && v.length > 9) return spanish.test(withEsPrefix[1]);
+    // Internacional: el código de país no empieza por 0; 8–15 cifras en total (E.164).
+    const intl = v.match(/^(?:\+|00)(\d+)$/);
+    if (intl) return /^[1-9]\d{7,14}$/.test(intl[1]);
+    return spanish.test(v);
   }
 
   /**
@@ -39,18 +55,20 @@
     const nombre = String(data.nombre || '').trim();
     const email = String(data.email || '').trim();
     if (nombre.length < 2) errors.push('nombre');
-    if (!/^\d{9}$/.test(normalizePhone(data.telefono))) errors.push('telefono');
+    if (!isValidPhone(data.telefono)) errors.push('telefono');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('email');
     if (data.privacidad !== true) errors.push('privacidad');
     return { ok: errors.length === 0, errors: FIELD_ORDER.filter(f => errors.includes(f)) };
   }
 
-  window.Brisa = { WEB3FORMS_KEY, validateBooking, normalizePhone };
+  window.Brisa = { validateBooking, isValidPhone, FIELD_ERRORS };
 
   /* ---------- Formulario ---------- */
   function initForm() {
     const form = document.getElementById('reserva-form');
     if (!form) return;
+    // Con JS validamos nosotros (mensajes de marca); sin JS valida el navegador.
+    form.noValidate = true;
     const msg = document.getElementById('reserva-mensaje');
     const button = form.querySelector('button[type="submit"]');
     const buttonText = button.textContent;
@@ -61,8 +79,20 @@
       msg.className = 'form__msg ' + (kind === 'ok' ? 'is-ok' : 'is-error');
     }
 
+    function fieldError(input) {
+      return document.getElementById(input.id + '-error');
+    }
+
     function clearInvalid(input) {
       input.removeAttribute('aria-invalid');
+      const err = fieldError(input);
+      if (err) err.textContent = '';
+    }
+
+    function markInvalid(input, name) {
+      input.setAttribute('aria-invalid', 'true');
+      const err = fieldError(input);
+      if (err) err.textContent = FIELD_ERRORS[name];
     }
 
     FIELD_ORDER.forEach(name => {
@@ -91,7 +121,7 @@
 
       FIELD_ORDER.forEach(name => {
         const input = form.elements[name];
-        if (result.errors.includes(name)) input.setAttribute('aria-invalid', 'true');
+        if (result.errors.includes(name)) markInvalid(input, name);
         else clearInvalid(input);
       });
 
@@ -106,10 +136,9 @@
       msg.className = 'form__msg';
 
       try {
-        const key = window.Brisa.WEB3FORMS_KEY;
-        form.elements.access_key.value = key;
+        const key = form.elements.access_key.value.trim();
         if (!key || key === DEMO_KEY) {
-          console.info('[Brisa] Modo demo: añade tu clave de Web3Forms en main.js para recibir las reservas por correo.');
+          console.info('[Brisa] Modo demo: pon tu clave de Web3Forms en el campo access_key de index.html para recibir las reservas por correo.');
           await new Promise(r => setTimeout(r, 400));
         } else {
           const payload = Object.fromEntries(new FormData(form));

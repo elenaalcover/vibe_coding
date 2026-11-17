@@ -63,7 +63,27 @@ def main():
         if "lang" not in dict(next(a for t, a in c.tags if t == "html")):
             errors.append(f"{page}: <html> sin lang")
 
+    # Revisión final · Important 1: el formulario funciona sin JavaScript
+    idx = parse("index.html")
+    form = next((a for t, a in idx.tags if t == "form" and a.get("id") == "reserva-form"), None)
+    if form is None:
+        errors.append("index.html: falta #reserva-form")
+    else:
+        if "novalidate" in form:
+            errors.append("index.html: el formulario lleva novalidate en el HTML (sin JS no valida)")
+        key = next((a for t, a in idx.tags if t == "input" and a.get("name") == "access_key"), {})
+        if not key.get("value"):
+            errors.append("index.html: access_key vacío en el HTML (sin JS se envía sin clave)")
+        if not any(t == "noscript" for t, _ in idx.tags):
+            errors.append("index.html: falta aviso <noscript> en la reserva")
+
     css = (ROOT / "styles.css").read_text(encoding="utf-8").lower()
+    # Revisión final · Important 2: foco visible con contraste (anillo Carbón)
+    focus_rule = re.search(r"^:focus-visible\s*\{([^}]*)\}", css, re.M)
+    if not focus_rule or "box-shadow" not in focus_rule.group(1) or "--color-carbon" not in focus_rule.group(1):
+        errors.append("styles.css: :focus-visible sin anillo Carbón (contraste < 3:1)")
+    if "outline-color: var(--color-rosa)" in css:
+        errors.append("styles.css: el foco del pie usa Rosa en vez de Terracota")
     for hexcol in set(re.findall(r"#[0-9a-f]{3,6}\b", css)):
         if hexcol not in PALETTE:
             errors.append(f"styles.css: color fuera de paleta {hexcol}")

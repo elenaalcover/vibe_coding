@@ -17,10 +17,11 @@ Después abre <http://localhost:8080> en el navegador.
 ## Cómo recibir las reservas en tu correo
 
 1. Entra en <https://web3forms.com>, escribe el correo donde quieres recibir las reservas y pulsa **Create Access Key**. Te llega la clave al momento.
-2. Abre `main.js` y cambia esta línea por tu clave:
-   ```js
-   const WEB3FORMS_KEY = 'PON_AQUI_TU_CLAVE_DE_WEB3FORMS';
+2. Abre `index.html`, busca esta línea (en la sección de reserva) y cambia el texto de ejemplo por tu clave:
+   ```html
+   <input type="hidden" name="access_key" value="PON_AQUI_TU_CLAVE_DE_WEB3FORMS">
    ```
+   Al estar en el HTML, el formulario funciona aunque el navegador no ejecute JavaScript.
 3. Listo. Cada reserva te llegará con el asunto «Nueva reserva de clase de prueba · Brisa» y el nombre, el teléfono y el correo de la persona.
 
 Mientras no pongas la clave, el formulario funciona en **modo demo**: muestra la confirmación pero no envía nada.
@@ -51,7 +52,7 @@ Todo lo marcado con `<!-- FICTICIO -->` en el código es inventado:
 |---|---|
 | `index.html` | La página principal con todas las secciones |
 | `styles.css` | Colores, tipografías y estilos del manual de marca |
-| `main.js` | Formulario de reserva, cabecera y animaciones suaves |
+| `main.js` | Validación y envío del formulario, cabecera y animaciones suaves |
 | `privacidad.html`, `aviso-legal.html` | Textos legales de ejemplo |
 | `404.html` | «Esta página se ha ido a estirar» |
 | `assets/` | Logo y favicon |

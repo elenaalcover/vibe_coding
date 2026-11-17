@@ -25,11 +25,14 @@ Después abre <http://localhost:8080> en el navegador.
 
 Mientras no pongas la clave, el formulario funciona en **modo demo**: muestra la confirmación pero no envía nada.
 
-## Cómo publicarla gratis
+## Cómo publicarla en Vercel
 
-1. Entra en <https://app.netlify.com/drop>.
-2. Arrastra esta carpeta entera a la página.
-3. Netlify te da una dirección pública al momento. La página `404.html` se usa sola cuando alguien entra en una dirección que no existe.
+1. Entra en <https://vercel.com/new> e importa este repositorio de GitHub.
+2. En **Framework Preset** elige **Other**. Deja vacíos el comando de build y el directorio de salida: la web se sirve tal cual desde la raíz.
+3. Pulsa **Deploy**. Cada `push` a `main` vuelve a publicar la web sola.
+
+La página `404.html` se usa sola cuando alguien entra en una dirección que no existe.
+El archivo `.nojekyll` es para GitHub Pages: si también la publicas allí, sirve los archivos tal cual.
 
 ## Qué hay que cambiar antes de usarla de verdad
 

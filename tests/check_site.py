@@ -52,7 +52,7 @@ def main():
             if re.match(r"^(https?:|mailto:|tel:|data:|javascript:)", ref):
                 continue
             path, _, frag = ref.partition("#")
-            if path and not (ROOT / path).exists():
+            if path and not (ROOT / path.lstrip("/")).exists():
                 errors.append(f"{page}: enlace roto: {ref}")
             if frag and not path and frag not in c.ids:
                 errors.append(f"{page}: ancla inexistente: #{frag}")

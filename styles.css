@@ -200,8 +200,14 @@ p { margin: 0 0 calc(var(--space) * 2); }
 .logo { display: inline-flex; text-decoration: none; padding: 6px 0; }
 .logo svg { height: 44px; width: auto; }
 @media (min-width: 900px) { .logo svg { height: 54px; } }
+.logo svg { flex-shrink: 0; }
+/* Móvil: versión compacta (símbolo + "brisa"), recortando el espacio del descriptor */
+.logo { max-width: 118px; overflow: hidden; }
 .logo .logo__descriptor { display: none; }
-@media (min-width: 600px) { .logo .logo__descriptor { display: inline; } }
+@media (min-width: 600px) {
+  .logo { max-width: none; overflow: visible; }
+  .logo .logo__descriptor { display: inline; }
+}
 
 .nav { display: none; }
 @media (min-width: 1000px) {

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Pruebas del formulario · Brisa</title>
+  <style>body{font-family:system-ui,sans-serif;padding:24px;background:#FAF7F3;color:#3B3532}li.fail{color:#a33}#resumen{font-weight:600}</style>
+</head>
+<body>
+  <h1>Pruebas de <code>validateBooking</code></h1>
+  <p id="resumen">Ejecutando…</p>
+  <ul id="lista"></ul>
+  <script src="../main.js"></script>
+  <script>
+    const v = window.Brisa.validateBooking;
+    const ok = { nombre: 'Lucía', telefono: '612345678', email: 'a@b.es', privacidad: true };
+    const casos = [
+      ['teléfono con +34 y espacios es válido', v({ ...ok, telefono: '+34 612 345 678' }).ok === true],
+      ['teléfono de 9 dígitos es válido', v(ok).ok === true],
+      ['teléfono con 0034 y guiones es válido', v({ ...ok, telefono: '0034-612-345-678' }).ok === true],
+      ['todo vacío marca los 4 campos en orden', JSON.stringify(v({ nombre: '', telefono: '12a', email: 'x', privacidad: false }).errors) === '["nombre","telefono","email","privacidad"]'],
+      ['teléfono corto es error', v({ ...ok, telefono: '61234' }).errors[0] === 'telefono'],
+      ['teléfono con letras es error', v({ ...ok, telefono: '61234567a' }).errors[0] === 'telefono'],
+      ['nombre solo con espacios es error', v({ ...ok, nombre: '   ' }).errors[0] === 'nombre'],
+      ['email sin dominio es error', v({ ...ok, email: 'lucia@' }).errors[0] === 'email'],
+      ['privacidad sin marcar es error', v({ ...ok, privacidad: false }).errors[0] === 'privacidad'],
+      ['privacidad "true" como texto no vale', v({ ...ok, privacidad: 'true' }).ok === false],
+    ];
+    const fallos = casos.filter(([, pasa]) => !pasa).length;
+    document.getElementById('lista').innerHTML = casos.map(([n, p]) => `<li class="${p ? 'ok' : 'fail'}">${p ? '✔' : '✘'} ${n}</li>`).join('');
+    document.getElementById('resumen').textContent = `${casos.length - fallos}/${casos.length} pruebas superadas`;
+    document.title = fallos ? 'FAIL' : 'PASS';
+  </script>
+</body>
+</html>

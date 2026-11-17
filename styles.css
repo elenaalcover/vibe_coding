@@ -202,10 +202,12 @@ p { margin: 0 0 calc(var(--space) * 2); }
 @media (min-width: 900px) { .logo svg { height: 54px; } }
 .logo svg { flex-shrink: 0; }
 /* Móvil: versión compacta (símbolo + "brisa"), recortando el espacio del descriptor */
-.logo { max-width: 118px; overflow: hidden; }
+.logo { width: 128px; max-width: 128px; overflow: hidden; flex-shrink: 0; }
+.btn__extra { display: none; }
+@media (min-width: 360px) { .btn__extra { display: inline; } }
 .logo .logo__descriptor { display: none; }
 @media (min-width: 600px) {
-  .logo { max-width: none; overflow: visible; }
+  .logo { width: auto; max-width: none; overflow: visible; }
   .logo .logo__descriptor { display: inline; }
 }
 
